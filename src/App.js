@@ -1,1035 +1,759 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FaBuilding, 
-  FaKey, 
-  FaWallet, 
-  FaCertificate,
-  FaLink, 
-  FaHome, 
-  FaCoins, 
-  FaUserCheck,
-  FaMoneyBillWave,
-  FaTools,
-  FaCheckCircle
-} from 'react-icons/fa';
-import { SiBlockchaindotcom } from 'react-icons/si';
-import { GiToken } from 'react-icons/gi';
+import * as THREE from 'three';
+import { motion } from 'framer-motion';
+import { LineChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Line, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { Search, Globe, Shield, AlertTriangle, Server, Database, ChevronDown, Eye, Code, Terminal } from 'lucide-react';
 
-function AssetTokenizationApp() {
-  // State for tracking the current step
-  const [currentStep, setCurrentStep] = useState(0);
-  const [showAnimation, setShowAnimation] = useState(true);
-  
-  // Company information
-  const [companyInfo, setCompanyInfo] = useState({
-    name: "Acme Real Estate Holdings",
-    industry: "Real Estate",
-    registrationNumber: "REG12345678",
-    country: "United States",
-    establishedDate: "2010-05-15"
-  });
-  
-  // DID and wallet information
-  const [rootDID, setRootDID] = useState("");
-  const [walletAddress, setWalletAddress] = useState("");
-  
-  // Verifiable credentials
-  const [vcIssued, setVcIssued] = useState(false);
-  
-  // Soulbound token information
-  const [soulboundTokenID, setSoulboundTokenID] = useState("");
-  
-  // Asset information
-  const [assets, setAssets] = useState([
-    { 
-      id: "asset-001", 
-      name: "Downtown Office Building", 
-      type: "Commercial Real Estate", 
-      value: 5000000,
-      location: "123 Main St, New York, NY",
-      acquisitionDate: "2018-03-10",
-      registered: false
-    }
-  ]);
-  
-  // Token information
-  const [token, setToken] = useState({
-    name: "",
-    symbol: "",
-    totalSupply: 0,
-    price: 0,
-    contractAddress: ""
-  });
-  
-  // Investors
-  const [investors, setInvestors] = useState([]);
-  
-  // Auto-progress through steps for demonstration purposes
-  useEffect(() => {
-    if (!showAnimation) return;
-    
-    const timer = setTimeout(() => {
-      if (currentStep < steps.length - 1) {
-        setCurrentStep(currentStep + 1);
-      } else {
-        // Reset to the beginning after a longer pause
-        setTimeout(() => {
-          resetState();
-          setCurrentStep(0);
-        }, 3000);
-      }
-    }, 5000); // 5 seconds per step
-    
-    return () => clearTimeout(timer);
-  }, [currentStep, showAnimation]);
-  
-  // Reset all state
-  const resetState = () => {
-    setRootDID("");
-    setWalletAddress("");
-    setVcIssued(false);
-    setSoulboundTokenID("");
-    setAssets(assets.map(asset => ({ ...asset, registered: false })));
-    setToken({
-      name: "",
-      symbol: "",
-      totalSupply: 0,
-      price: 0,
-      contractAddress: ""
-    });
-    setInvestors([]);
-  };
-  // Step 1: Corporate Owner Setup functions
-  
-  // Create a corporate outlet
-  const createCorporateOutlet = () => {
-    console.log("Creating corporate outlet for:", companyInfo.name);
-    return new Promise(resolve => {
-      // Simulate API call
-      setTimeout(() => {
-        resolve(true);
-      }, 1000);
-    });
-  };
-  
-  // Generate a root DID for the corporate entity
-  const generateRootDID = async () => {
-    // Simulate DID creation
-    const randomId = Array(16).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-    const newDid = `did:ethr:${randomId}`;
-    
-    console.log("Generated Root DID:", newDid);
-    setRootDID(newDid);
-    
-    return newDid;
-  };
-  
-  // Create a wallet for the corporate outlet
-  const createCorporateWallet = async () => {
-    // Simulate wallet creation
-    const randomWallet = "0x" + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-    console.log("Created wallet address:", randomWallet);
-    setWalletAddress(randomWallet);
-    
-    return randomWallet;
-  };
-  
-  // Execute all corporate setup steps
-  const setupCorporateOwner = async () => {
-    try {
-      await createCorporateOutlet();
-      await generateRootDID();
-      await createCorporateWallet();
-      // Move to next step
-      setCurrentStep(1);
-    } catch (error) {
-      console.error("Error in corporate setup:", error);
-    }
-  };
-  
-  // Format a DID for display
-  const formatDID = (did) => {
-    if (!did) return "Not generated";
-    return `${did.substring(0, 8)}...${did.substring(did.length - 6)}`;
-  };
-  
-  // Format a wallet address for display
-  const formatAddress = (address) => {
-    if (!address) return "Not created";
-    return `${address.substring(0, 8)}...${address.substring(address.length - 6)}`;
-  };
-  // Step 2: Verifiable Credentials Issuance functions
-  
-  // Design and issue verifiable credentials
-  const issueVerifiableCredentials = async () => {
-    if (!rootDID) {
-      console.error("Cannot issue VC: Root DID not created");
-      return false;
-    }
-    
-    // Simulate VC issuance
-    console.log("Issuing verifiable credentials to DID:", rootDID);
-    setVcIssued(true);
-    
-    // Move to next step
-    setCurrentStep(2);
-    return true;
-  };
-  
-  // Step 3: Soulbound Token Creation functions
-  
-  // Design and mint soulbound token
-  const createSoulboundToken = async () => {
-    if (!rootDID || !vcIssued) {
-      console.error("Cannot create soulbound token: Prerequisites not met");
-      return false;
-    }
-    
-    // Simulate token creation
-    const tokenId = "SBT-" + Date.now().toString(16);
-    console.log("Creating soulbound token:", tokenId);
-    
-    // Simulate blockchain transaction for minting
-    const txHash = "0x" + Array(64).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-    console.log("Minting transaction:", txHash);
-    
-    setSoulboundTokenID(tokenId);
-    
-    // Move to next step
-    setCurrentStep(3);
-    return tokenId;
-  };
-  
-  // Get soulbound token details
-  const getSoulboundTokenDetails = () => {
-    return {
-      id: soulboundTokenID,
-      owner: rootDID,
-      issuanceDate: new Date().toISOString(),
-      type: "Corporate Identity",
-      transferable: false
-    };
-  };
-  // Step 4: Asset Registration functions
-  
-  // Register assets on blockchain
-  const registerAssets = async () => {
-    if (!soulboundTokenID) {
-      console.error("Cannot register assets: Soulbound token not created");
-      return false;
-    }
-    
-    // Simulate asset registration
-    console.log("Registering assets with soulbound token:", soulboundTokenID);
-    
-    // Update assets to registered status
-    const updatedAssets = assets.map(asset => ({ ...asset, registered: true }));
-    setAssets(updatedAssets);
-    
-    // Move to next step
-    setCurrentStep(4);
-    return true;
-  };
-  
-  // Format currency for display
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
-  
-  // Step 5: Asset Tokenization functions
-  
-  // Design tokens and create smart contract
-  const tokenizeAssets = async () => {
-    if (!assets.some(asset => asset.registered)) {
-      console.error("Cannot tokenize assets: No registered assets");
-      return false;
-    }
-    
-    // Calculate total asset value
-    const totalValue = assets.reduce((sum, asset) => sum + asset.value, 0);
-    
-    // Create token
-    const newToken = {
-      name: "Acme Real Estate Token",
-      symbol: "ACRE",
-      totalSupply: 5000000,
-      price: totalValue / 5000000,
-      contractAddress: "0x" + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('')
-    };
-    
-    console.log("Creating token:", newToken);
-    setToken(newToken);
-    
-    // Move to next step
-    setCurrentStep(5);
-    return newToken;
-  };
-  // Step 6: Investor Onboarding functions
-  
-  // Onboard investors to the platform
-  const onboardInvestors = async () => {
-    if (!token.contractAddress) {
-      console.error("Cannot onboard investors: Token not created");
-      return false;
-    }
-    
-    // Generate sample investors
-    const newInvestors = [
-      {
-        id: "inv-001",
-        name: "John Smith",
-        walletAddress: "0x" + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''),
-        kycVerified: true,
-        investmentAmount: 250000,
-        tokenAmount: Math.floor(250000 / token.price),
-        joinDate: new Date().toISOString()
-      },
-      {
-        id: "inv-002",
-        name: "Alice Johnson",
-        walletAddress: "0x" + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''),
-        kycVerified: true,
-        investmentAmount: 500000,
-        tokenAmount: Math.floor(500000 / token.price),
-        joinDate: new Date().toISOString()
-      },
-      {
-        id: "inv-003",
-        name: "Global Investments Ltd",
-        walletAddress: "0x" + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''),
-        kycVerified: true,
-        investmentAmount: 1000000,
-        tokenAmount: Math.floor(1000000 / token.price),
-        joinDate: new Date().toISOString()
-      }
-    ];
-    
-    console.log("Onboarding investors:", newInvestors);
-    setInvestors(newInvestors);
-    
-    // Move to next step
-    setCurrentStep(6);
-    return newInvestors;
-  };
-  
-  // Step 7: Dividend Distribution functions
-  
-  // Calculate and distribute dividends
-  const distributeDividends = async () => {
-    if (investors.length === 0) {
-      console.error("Cannot distribute dividends: No investors");
-      return false;
-    }
-    
-    // Simulate total dividend amount
-    const totalDividend = 250000;
-    
-    // Calculate total tokens issued to investors
-    const totalTokens = investors.reduce((sum, investor) => sum + investor.tokenAmount, 0);
-    
-    // Distribute dividends proportionally
-    const investorsWithDividends = investors.map(investor => {
-      const proportion = investor.tokenAmount / totalTokens;
-      const dividendAmount = totalDividend * proportion;
-      
-      return {
-        ...investor,
-        dividend: dividendAmount,
-        dividendDistributed: true,
-        dividendDate: new Date().toISOString()
-      };
-    });
-    
-    console.log("Distributing dividends:", investorsWithDividends);
-    setInvestors(investorsWithDividends);
-    
-    // Move to next step
-    setCurrentStep(7);
-    return true;
-  };
-  // Step 8: Ongoing Management functions
-  
-  // Perform ongoing management tasks
-  const performOngoingManagement = async () => {
-    // Simulate management tasks
-    console.log("Performing ongoing management tasks");
-    
-    // In a real app, this would include:
-    // - Token maintenance
-    // - Compliance monitoring
-    // - Investor relations management
-    
-    return true;
-  };
-  
-  // Define UI for each step
-  const steps = [
-    // Step 1: Corporate Owner Setup
-    {
-      id: 0,
-      title: "Corporate Owner Setup",
-      subtitle: "Create the foundation for your tokenization",
-      icon: <FaBuilding className="text-white h-16 w-16 mb-4" />,
-      color: "from-blue-600 to-blue-800",
-      tasks: [
-        { name: "Corporate Outlet Creation", completed: rootDID !== "" || walletAddress !== "" },
-        { name: "Root DID Creation", completed: rootDID !== "" },
-        { name: "Wallet Creation", completed: walletAddress !== "" }
-      ],
-      content: (
-        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
-          <div className="space-y-6">
-            <div>
-              <div className="text-sm text-white/70 mb-2">Company Information</div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="text-white/50 text-xs">Name</div>
-                  <div className="text-white font-medium">{companyInfo.name}</div>
-                </div>
-                <div>
-                  <div className="text-white/50 text-xs">Industry</div>
-                  <div className="text-white font-medium">{companyInfo.industry}</div>
-                </div>
-                <div>
-                  <div className="text-white/50 text-xs">Registration</div>
-                  <div className="text-white font-medium">{companyInfo.registrationNumber}</div>
-                </div>
-                <div>
-                  <div className="text-white/50 text-xs">Country</div>
-                  <div className="text-white font-medium">{companyInfo.country}</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white/5 p-4 rounded-lg">
-              <div className="flex items-center mb-3">
-                <FaKey className="text-white/70 mr-2" />
-                <div className="text-white font-medium">Root DID</div>
-              </div>
-              <div className="font-mono text-sm text-white/90 break-all">
-                {rootDID || "Not generated yet"}
-              </div>
-            </div>
-            
-            <div className="bg-white/5 p-4 rounded-lg">
-              <div className="flex items-center mb-3">
-                <FaWallet className="text-white/70 mr-2" />
-                <div className="text-white font-medium">Corporate Wallet</div>
-              </div>
-              <div className="font-mono text-sm text-white/90 break-all">
-                {walletAddress || "Not created yet"}
-              </div>
-            </div>
-            
-            {!rootDID && !walletAddress && (
-              <button 
-                onClick={setupCorporateOwner}
-                className="w-full bg-white hover:bg-white/90 text-blue-800 py-3 px-4 rounded-lg font-medium transition-colors"
-              >
-                Set Up Corporate Owner
-              </button>
-            )}
-          </div>
-        </div>
-      )
-    },
-    
-    // Step 2: Verifiable Credentials Issuance
-    {
-      id: 1,
-      title: "Verifiable Credentials",
-      subtitle: "Issue credentials to the corporate entity",
-      icon: <FaCertificate className="text-white h-16 w-16 mb-4" />,
-      color: "from-purple-600 to-purple-800",
-      tasks: [
-        { name: "VC Design", completed: vcIssued },
-        { name: "VC Issuance", completed: vcIssued }
-      ],
-      content: (
-        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
-          <div className="space-y-6">
-            <div className="bg-white/5 p-4 rounded-lg">
-              <div className="flex items-center mb-3">
-                <FaBuilding className="text-white/70 mr-2" />
-                <div className="text-white font-medium">Corporate Identity</div>
-              </div>
-              <div className="text-white/90">
-                {companyInfo.name} - {companyInfo.registrationNumber}
-              </div>
-            </div>
-            
-            <div className="bg-white/5 p-4 rounded-lg">
-              <div className="flex items-center mb-3">
-                <FaKey className="text-white/70 mr-2" />
-                <div className="text-white font-medium">Associated DID</div>
-              </div>
-              <div className="font-mono text-sm text-white/90 break-all">
-                {formatDID(rootDID)}
-              </div>
-            </div>
-            
-            {vcIssued ? (
-              <div className="bg-green-500/20 p-4 rounded-lg">
-                <div className="flex items-center">
-                  <FaCheckCircle className="text-green-400 mr-2" />
-                  <div className="text-white font-medium">Credentials Successfully Issued</div>
-                </div>
-                <div className="text-white/70 text-sm mt-2">
-                  Corporate identity credentials have been issued and linked to the DID
-                </div>
-              </div>
-            ) : (
-              <button 
-                onClick={issueVerifiableCredentials}
-                disabled={!rootDID}
-                className={`w-full ${rootDID ? 'bg-white hover:bg-white/90 text-purple-800' : 'bg-white/30 cursor-not-allowed text-white/50'} py-3 px-4 rounded-lg font-medium transition-colors`}
-              >
-                Issue Verifiable Credentials
-              </button>
-            )}
-          </div>
-        </div>
-      )
-    },
-    // Step 3: Soulbound Token Creation
-    {
-      id: 2,
-      title: "Soulbound Token Creation",
-      subtitle: "Create a non-transferable token tied to the corporate identity",
-      icon: <FaLink className="text-white h-16 w-16 mb-4" />,
-      color: "from-indigo-600 to-indigo-800",
-      tasks: [
-        { name: "Soulbound Token Design", completed: soulboundTokenID !== "" },
-        { name: "Soulbound NFT Minting", completed: soulboundTokenID !== "" }
-      ],
-      content: (
-        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
-          <div className="space-y-6">
-            <div className="bg-white/5 p-4 rounded-lg">
-              <div className="flex items-center mb-3">
-                <FaKey className="text-white/70 mr-2" />
-                <div className="text-white font-medium">Linked Identity (DID)</div>
-              </div>
-              <div className="font-mono text-sm text-white/90 break-all">
-                {formatDID(rootDID)}
-              </div>
-            </div>
-            
-            {soulboundTokenID ? (
-              <div>
-                <div className="bg-white/5 p-4 rounded-lg mb-4">
-                  <div className="flex items-center mb-3">
-                    <FaLink className="text-white/70 mr-2" />
-                    <div className="text-white font-medium">Soulbound Token ID</div>
-                  </div>
-                  <div className="font-mono text-sm text-white/90 break-all">
-                    {soulboundTokenID}
-                  </div>
-                </div>
-                
-                <div className="bg-green-500/20 p-4 rounded-lg">
-                  <div className="flex items-center">
-                    <FaCheckCircle className="text-green-400 mr-2" />
-                    <div className="text-white font-medium">Token Successfully Created</div>
-                  </div>
-                  <div className="text-white/70 text-sm mt-2">
-                    Soulbound token permanently linked to corporate identity
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <button 
-                onClick={createSoulboundToken}
-                disabled={!rootDID || !vcIssued}
-                className={`w-full ${rootDID && vcIssued ? 'bg-white hover:bg-white/90 text-indigo-800' : 'bg-white/30 cursor-not-allowed text-white/50'} py-3 px-4 rounded-lg font-medium transition-colors`}
-              >
-                Create Soulbound Token
-              </button>
-            )}
-          </div>
-        </div>
-      )
-    },
-    
-    // Step 4: Asset Registration
-    {
-      id: 3,
-      title: "Asset Registration",
-      subtitle: "Register assets on the blockchain",
-      icon: <FaHome className="text-white h-16 w-16 mb-4" />,
-      color: "from-green-600 to-green-800",
-      tasks: [
-        { name: "Asset Identification", completed: assets.length > 0 },
-        { name: "Asset Valuation", completed: assets.length > 0 },
-        { name: "Asset Registration", completed: assets.some(a => a.registered) }
-      ],
-      content: (
-        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
-          <div className="space-y-6">
-            <div className="bg-white/5 p-4 rounded-lg">
-              <div className="flex items-center mb-3">
-                <FaLink className="text-white/70 mr-2" />
-                <div className="text-white font-medium">Soulbound Token ID</div>
-              </div>
-              <div className="font-mono text-sm text-white/90 break-all">
-                {soulboundTokenID || "Not created yet"}
-              </div>
-            </div>
-            
-            <div className="bg-white/5 p-4 rounded-lg">
-              <div className="flex items-center mb-3">
-                <FaHome className="text-white/70 mr-2" />
-                <div className="text-white font-medium">Assets</div>
-              </div>
-              
-              {assets.map((asset, index) => (
-                <div key={asset.id} className={`${index > 0 ? 'mt-4 pt-4 border-t border-white/10' : ''}`}>
-                  <div className="flex justify-between">
-                    <div className="text-white font-medium">{asset.name}</div>
-                    <div className="text-white/70">{formatCurrency(asset.value)}</div>
-                  </div>
-                  <div className="text-white/50 text-sm">
-                    {asset.type} - {asset.location}
-                  </div>
-                  {asset.registered && (
-                    <div className="flex items-center mt-1 text-green-400 text-xs">
-                      <FaCheckCircle className="mr-1" /> Registered on blockchain
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            
-            {!assets.some(a => a.registered) ? (
-              <button 
-                onClick={registerAssets}
-                disabled={!soulboundTokenID}
-                className={`w-full ${soulboundTokenID ? 'bg-white hover:bg-white/90 text-green-800' : 'bg-white/30 cursor-not-allowed text-white/50'} py-3 px-4 rounded-lg font-medium transition-colors`}
-              >
-                Register Assets
-              </button>
-            ) : (
-              <div className="bg-green-500/20 p-4 rounded-lg">
-                <div className="flex items-center">
-                  <FaCheckCircle className="text-green-400 mr-2" />
-                  <div className="text-white font-medium">Assets Successfully Registered</div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )
-    },
-    // Step 5: Asset Tokenization
-    {
-      id: 4,
-      title: "Asset Tokenization",
-      subtitle: "Create tokens representing ownership of the registered assets",
-      icon: <GiToken className="text-white h-16 w-16 mb-4" />,
-      color: "from-yellow-600 to-yellow-800",
-      tasks: [
-        { name: "Token Design", completed: token.name !== "" },
-        { name: "Smart Contract Creation", completed: token.contractAddress !== "" },
-        { name: "Token Minting", completed: token.totalSupply > 0 }
-      ],
-      content: (
-        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
-          <div className="space-y-6">
-            {token.name ? (
-              <div className="space-y-4">
-                <div className="bg-white/5 p-4 rounded-lg">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <div className="text-white/50 text-xs">Token Name</div>
-                      <div className="text-white font-medium">{token.name}</div>
-                    </div>
-                    <div>
-                      <div className="text-white/50 text-xs">Symbol</div>
-                      <div className="text-white font-medium">{token.symbol}</div>
-                    </div>
-                    <div>
-                      <div className="text-white/50 text-xs">Total Supply</div>
-                      <div className="text-white font-medium">{token.totalSupply.toLocaleString()}</div>
-                    </div>
-                    <div>
-                      <div className="text-white/50 text-xs">Token Price</div>
-                      <div className="text-white font-medium">{formatCurrency(token.price)}</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-white/5 p-4 rounded-lg">
-                  <div className="flex items-center mb-3">
-                    <SiBlockchaindotcom className="text-white/70 mr-2" />
-                    <div className="text-white font-medium">Smart Contract</div>
-                  </div>
-                  <div className="font-mono text-sm text-white/90 break-all">
-                    {token.contractAddress}
-                  </div>
-                </div>
-                
-                <div className="bg-green-500/20 p-4 rounded-lg">
-                  <div className="flex items-center">
-                    <FaCheckCircle className="text-green-400 mr-2" />
-                    <div className="text-white font-medium">Tokens Successfully Created</div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <button 
-                onClick={tokenizeAssets}
-                disabled={!assets.some(a => a.registered)}
-                className={`w-full ${assets.some(a => a.registered) ? 'bg-white hover:bg-white/90 text-yellow-800' : 'bg-white/30 cursor-not-allowed text-white/50'} py-3 px-4 rounded-lg font-medium transition-colors`}
-              >
-                Tokenize Assets
-              </button>
-            )}
-          </div>
-        </div>
-      )
-    },
-    
-    // Step 6: Investor Onboarding
-    {
-      id: 5,
-      title: "Investor Onboarding",
-      subtitle: "Verify and onboard investors to the platform",
-      icon: <FaUserCheck className="text-white h-16 w-16 mb-4" />,
-      color: "from-pink-600 to-pink-800",
-      tasks: [
-        { name: "Investor Verification", completed: investors.length > 0 },
-        { name: "Investor Onboarding", completed: investors.length > 0 }
-      ],
-      content: (
-        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
-          <div className="space-y-6">
-            {investors.length > 0 ? (
-              <div>
-                <div className="text-white/70 mb-3">Onboarded Investors</div>
-                {investors.map((investor, index) => (
-                  <div key={investor.id} className={`bg-white/5 p-4 rounded-lg ${index > 0 ? 'mt-4' : ''}`}>
-                    <div className="flex justify-between mb-2">
-                      <div className="text-white font-medium">{investor.name}</div>
-                      <div className="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded-full">Verified</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <div className="text-white/50 text-xs">Investment</div>
-                        <div className="text-white">{formatCurrency(investor.investmentAmount)}</div>
-                      </div>
-                      <div>
-                        <div className="text-white/50 text-xs">Tokens</div>
-                        <div className="text-white">{investor.tokenAmount.toLocaleString()} {token.symbol}</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <button 
-                onClick={onboardInvestors}
-                disabled={!token.contractAddress}
-                className={`w-full ${token.contractAddress ? 'bg-white hover:bg-white/90 text-pink-800' : 'bg-white/30 cursor-not-allowed text-white/50'} py-3 px-4 rounded-lg font-medium transition-colors`}
-              >
-                Onboard Investors
-              </button>
-            )}
-          </div>
-        </div>
-      )
-    },
-    // Step 7: Dividend Distribution
-    {
-      id: 6,
-      title: "Dividend Distribution",
-      subtitle: "Calculate and distribute dividends to token holders",
-      icon: <FaMoneyBillWave className="text-white h-16 w-16 mb-4" />,
-      color: "from-cyan-600 to-cyan-800",
-      tasks: [
-        { name: "Dividend Calculation", completed: investors.some(inv => inv.dividend) },
-        { name: "Dividend Distribution", completed: investors.some(inv => inv.dividend) }
-      ],
-      content: (
-        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
-          <div className="space-y-6">
-            {investors.some(inv => inv.dividend) ? (
-              <div>
-                <div className="bg-white/5 p-4 rounded-lg mb-4">
-                  <div className="flex justify-between mb-2">
-                    <div className="text-white font-medium">Dividend Summary</div>
-                    <div className="text-white/70">{new Date().toLocaleDateString()}</div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <div className="text-white/50 text-xs">Total Distribution</div>
-                      <div className="text-white font-medium">{formatCurrency(250000)}</div>
-                    </div>
-                    <div>
-                      <div className="text-white/50 text-xs">Recipients</div>
-                      <div className="text-white font-medium">{investors.length}</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="text-white/70 mb-3">Investor Distributions</div>
-                {investors.map((investor, index) => (
-                  <div key={investor.id} className={`bg-white/5 p-4 rounded-lg ${index > 0 ? 'mt-4' : ''}`}>
-                    <div className="flex justify-between mb-2">
-                      <div className="text-white font-medium">{investor.name}</div>
-                      <div className="text-white font-medium">{formatCurrency(investor.dividend)}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <div className="text-white/50 text-xs">Tokens Held</div>
-                        <div className="text-white">{investor.tokenAmount.toLocaleString()} {token.symbol}</div>
-                      </div>
-                      <div>
-                        <div className="text-white/50 text-xs">Status</div>
-                        <div className="text-green-400">Distributed</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <button 
-                onClick={distributeDividends}
-                disabled={investors.length === 0}
-                className={`w-full ${investors.length > 0 ? 'bg-white hover:bg-white/90 text-cyan-800' : 'bg-white/30 cursor-not-allowed text-white/50'} py-3 px-4 rounded-lg font-medium transition-colors`}
-              >
-                Distribute Dividends
-              </button>
-            )}
-          </div>
-        </div>
-      )
-    },
-    
-    // Step 8: Ongoing Management
-    {
-      id: 7,
-      title: "Ongoing Management",
-      subtitle: "Maintain token integrity and manage investor relations",
-      icon: <FaTools className="text-white h-16 w-16 mb-4" />,
-      color: "from-gray-600 to-gray-800",
-      tasks: [
-        { name: "Token Maintenance", completed: true },
-        { name: "Compliance Monitoring", completed: true },
-        { name: "Investor Relations", completed: true }
-      ],
-      content: (
-        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
-          <div className="space-y-6">
-            <div className="bg-white/5 p-4 rounded-lg">
-              <div className="flex items-center mb-3">
-                <SiBlockchaindotcom className="text-white/70 mr-2" />
-                <div className="text-white font-medium">Asset Status</div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="text-white/50 text-xs">Total Assets</div>
-                  <div className="text-white font-medium">{assets.length}</div>
-                </div>
-                <div>
-                  <div className="text-white/50 text-xs">Total Value</div>
-                  <div className="text-white font-medium">{formatCurrency(assets.reduce((sum, asset) => sum + asset.value, 0))}</div>
-                </div>
-                <div>
-                  <div className="text-white/50 text-xs">Token Supply</div>
-                  <div className="text-white font-medium">{token.totalSupply ? token.totalSupply.toLocaleString() : '-'}</div>
-                </div>
-                <div>
-                  <div className="text-white/50 text-xs">Investors</div>
-                  <div className="text-white font-medium">{investors.length}</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white/5 p-4 rounded-lg">
-              <div className="flex items-center mb-3">
-                <FaTools className="text-white/70 mr-2" />
-                <div className="text-white font-medium">Management Tasks</div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                  <div className="text-white">Daily compliance check complete</div>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                  <div className="text-white">Token smart contract secure</div>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                  <div className="text-white">Investor communications sent</div>
-                </div>
-              </div>
-            </div>
-            
-            <button 
-              onClick={() => {
-                resetState();
-                setCurrentStep(0);
-              }}
-              className="w-full bg-white hover:bg-white/90 text-gray-800 py-3 px-4 rounded-lg font-medium transition-colors"
-            >
-              Start New Project
-            </button>
-          </div>
-        </div>
-      )
-    }
+// Components
+import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
+import Footer from './components/Footer';
+
+// Scenes
+import NetworkMap from './scenes/NetworkMap';
+
+// Tool-specific components
+import NmapScanner from './tools/NmapScanner';
+import NslookupTool from './tools/NslookupTool';
+import WhatwebScanner from './tools/WhatwebScanner';
+import DirbScanner from './tools/DirbScanner';
+import GobusterScanner from './tools/GobusterScanner';
+import DnsReconTool from './tools/DnsReconTool';
+
+function App() {
+  // States
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeSubTab, setActiveSubTab] = useState('');
+  const [scanInProgress, setScanInProgress] = useState(false);
+  const [target, setTarget] = useState('');
+  const [scanResults, setScanResults] = useState({});
+  const [vulnerabilities, setVulnerabilities] = useState([]);
+  const [scanHistory, setScanHistory] = useState([]);
+  const [darkMode, setDarkMode] = useState(false);
+  const [loadingPercentage, setLoadingPercentage] = useState(0);
+
+  // Mock data for charts
+  const vulnerabilityData = [
+    { name: 'Critical', count: 3, color: '#FF5252' },
+    { name: 'High', count: 7, color: '#FF9100' },
+    { name: 'Medium', count: 12, color: '#FFEB3B' },
+    { name: 'Low', count: 18, color: '#4CAF50' },
+    { name: 'Info', count: 25, color: '#2196F3' }
   ];
-  
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { duration: 0.5 }
-    },
-    exit: { 
-      opacity: 0,
-      transition: { duration: 0.3 }
-    }
-  };
-  
-  const stepIndicatorVariants = {
-    inactive: { 
-      scale: 1, 
-      opacity: 0.5,
-      border: "2px solid rgba(255, 255, 255, 0.3)"
-    },
-    active: { 
-      scale: 1.1, 
-      opacity: 1,
-      border: "2px solid rgba(255, 255, 255, 1)",
-      transition: { 
-        duration: 0.3,
-        type: "spring",
-        stiffness: 300
-      }
-    },
-    completed: { 
-      scale: 1, 
-      opacity: 1,
-      background: "rgba(255, 255, 255, 0.2)",
-      border: "2px solid rgba(255, 255, 255, 0.8)"
-    }
+
+  const timelineData = [
+    { name: 'Jan', scans: 12, vulnerabilities: 34 },
+    { name: 'Feb', scans: 19, vulnerabilities: 28 },
+    { name: 'Mar', scans: 15, vulnerabilities: 42 },
+    { name: 'Apr', scans: 22, vulnerabilities: 31 },
+    { name: 'May', scans: 28, vulnerabilities: 47 },
+    { name: 'Jun', scans: 24, vulnerabilities: 39 }
+  ];
+  // Calculate severity score based on findings
+  const calculateSeverityScore = (findings) => {
+    const weights = {
+      critical: 10,
+      high: 7,
+      medium: 4,
+      low: 1,
+      info: 0
+    };
+
+    let totalScore = 0;
+    let maxPossibleScore = 0;
+
+    Object.keys(findings).forEach(severity => {
+      totalScore += findings[severity] * weights[severity.toLowerCase()];
+      maxPossibleScore += findings[severity] * 10; // Assuming all could be critical
+    });
+
+    // Normalize to 0-100 scale
+    return Math.min(100, Math.round((totalScore / maxPossibleScore) * 100) || 0);
   };
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 relative overflow-hidden">
-      {/* Purple gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800 opacity-90"></div>
+  // Mock function to start scan
+  const startScan = () => {
+    if (!target.trim()) {
+      alert('Please enter a target');
+      return;
+    }
+
+    setScanInProgress(true);
+    setLoadingPercentage(0);
+
+    // Simulate scan progress
+    const interval = setInterval(() => {
+      setLoadingPercentage(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + Math.floor(Math.random() * 5) + 1;
+      });
+    }, 300);
+
+    // Simulate scan completion
+    setTimeout(() => {
+      clearInterval(interval);
+      setLoadingPercentage(100);
       
-      {/* Decorative elements */}
-      <div className="absolute top-20 left-20 w-32 h-32 bg-white rounded-full opacity-5"></div>
-      <div className="absolute bottom-40 right-20 w-64 h-64 bg-white rounded-full opacity-5"></div>
+      // Mock results
+      const mockFindings = {
+        critical: Math.floor(Math.random() * 5),
+        high: Math.floor(Math.random() * 10),
+        medium: Math.floor(Math.random() * 15),
+        low: Math.floor(Math.random() * 20),
+        info: Math.floor(Math.random() * 30)
+      };
       
-      {/* Content container */}
-      <div className="relative w-full max-w-4xl mx-auto px-4 py-12 z-10">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white">
-            Asset Tokenization Platform
-          </h1>
-          <p className="text-xl text-white/80 mt-2">
-            Transform real-world assets into digital tokens
-          </p>
-        </div>
-        
-        {/* Step indicators */}
-        <div className="flex justify-center mb-16">
-          {steps.map((step, index) => (
-            <motion.div 
-              key={step.id}
-              className={`w-12 h-12 mx-3 rounded-full flex items-center justify-center text-white cursor-pointer`}
-              variants={stepIndicatorVariants}
-              animate={
-                currentStep > index
-                  ? "completed"
-                  : currentStep === index
-                    ? "active"
-                    : "inactive"
-              }
-              onClick={() => setCurrentStep(index)}
-            >
-              {currentStep > index ? (
-                <FaCheckCircle className="text-white" />
-              ) : (
-                <span>{index + 1}</span>
-              )}
-            </motion.div>
-          ))}
-        </div>
-        
-        {/* Main content */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentStep}
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="flex flex-col items-center justify-center"
-          >
-            {/* Icon */}
-            <div className={`rounded-full p-4 bg-gradient-to-br ${steps[currentStep].color}`}>
-              {steps[currentStep].icon}
-            </div>
-            
-            {/* Title */}
-            <h2 className="text-4xl font-bold text-white mb-2 mt-4">
-              {steps[currentStep].title}
-            </h2>
-            
-            {/* Subtitle */}
-            <p className="text-white/80 text-xl mb-8 text-center max-w-2xl">
-              {steps[currentStep].subtitle}
-            </p>
-            
-            {/* Tasks */}
-            <div className="flex justify-center space-x-6 mb-8 overflow-auto">
-              {steps[currentStep].tasks.map((task, index) => (
-                <div 
-                  key={index} 
-                  className="flex items-center bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg"
+      const mockResults = {
+        target: target,
+        timestamp: new Date().toISOString(),
+        tools: {
+          nmap: { ports: [22, 80, 443, 3306], services: ['SSH', 'HTTP', 'HTTPS', 'MySQL'] },
+          nslookup: { ip: '192.168.1.' + Math.floor(Math.random() * 255), records: ['A', 'MX', 'NS'] },
+          whatweb: { technologies: ['Apache', 'PHP', 'jQuery', 'Bootstrap'] },
+          dirb: { directories: ['/admin', '/login', '/api', '/uploads'] },
+          gobuster: { files: ['.env', 'config.php', 'backup.sql'] },
+          dnsRecon: { subdomains: ['api', 'dev', 'staging', 'mail'] }
+        },
+        findings: mockFindings,
+        severityScore: calculateSeverityScore(mockFindings)
+      };
+      
+      setScanResults(mockResults);
+      
+      // Add vulnerabilities based on findings
+      const newVulnerabilities = [];
+      if (mockResults.tools.nmap.ports.includes(22)) {
+        newVulnerabilities.push({
+          id: Date.now() + 1,
+          name: 'SSH Service Exposed',
+          severity: 'Medium',
+          description: 'SSH service is exposed and might be vulnerable to brute force attacks.',
+          recommendation: 'Limit SSH access or implement key-based authentication.'
+        });
+      }
+      
+      if (mockResults.tools.dirb.directories.includes('/admin')) {
+        newVulnerabilities.push({
+          id: Date.now() + 2,
+          name: 'Admin Panel Exposed',
+          severity: 'High',
+          description: 'Admin panel is publicly accessible without sufficient protection.',
+          recommendation: 'Restrict access to admin panel using IP filtering or VPN.'
+        });
+      }
+      
+      // Add more mock vulnerabilities
+      if (Math.random() > 0.5) {
+        newVulnerabilities.push({
+          id: Date.now() + 3,
+          name: 'Outdated Web Server',
+          severity: 'Critical',
+          description: 'Web server is running an outdated version with known vulnerabilities.',
+          recommendation: 'Update to the latest version and apply security patches.'
+        });
+      }
+      
+      setVulnerabilities(newVulnerabilities);
+      
+      // Add to scan history
+      setScanHistory(prev => [...prev, {
+        id: Date.now(),
+        target: target,
+        date: new Date().toLocaleDateString(),
+        vulnerabilities: newVulnerabilities.length,
+        severityScore: mockResults.severityScore
+      }]);
+      
+      setScanInProgress(false);
+    }, 8000);
+  };
+
+  // Function to get color based on severity score
+  const getSeverityColor = (score) => {
+    if (score >= 80) return '#FF5252'; // Critical
+    if (score >= 60) return '#FF9100'; // High
+    if (score >= 40) return '#FFEB3B'; // Medium
+    if (score >= 20) return '#4CAF50'; // Low
+    return '#2196F3'; // Info
+  };
+
+  // Function to get severity level based on score
+  const getSeverityLevel = (score) => {
+    if (score >= 80) return 'Critical';
+    if (score >= 60) return 'High';
+    if (score >= 40) return 'Medium';
+    if (score >= 20) return 'Low';
+    return 'Info';
+  };
+  // Render dashboard
+  const renderDashboard = () => (
+    <div className="p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-8"
+      >
+        <h2 className="text-2xl font-bold mb-4">Vulnerability Scanner Dashboard</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+          <div className="flex flex-col md:flex-row mb-6">
+            <div className="w-full md:w-2/3 pr-0 md:pr-4 mb-4 md:mb-0">
+              <label className="block text-sm font-medium mb-2">Target (URL, IP, or Domain)</label>
+              <div className="flex">
+                <input
+                  type="text"
+                  value={target}
+                  onChange={(e) => setTarget(e.target.value)}
+                  placeholder="e.g., example.com or 192.168.1.1"
+                  className="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={startScan}
+                  disabled={scanInProgress}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-r-lg flex items-center"
                 >
-                  {task.completed ? (
-                    <FaCheckCircle className="text-green-400 mr-2" />
-                  ) : (
-                    <div className="w-4 h-4 border-2 border-white/50 rounded-full mr-2"></div>
-                  )}
-                  <span className="text-white">{task.name}</span>
+                  {scanInProgress ? 'Scanning...' : 'Start Scan'}
+                  {!scanInProgress && <Search className="ml-2 h-5 w-5" />}
+                </button>
+              </div>
+            </div>
+            <div className="w-full md:w-1/3">
+              <label className="block text-sm font-medium mb-2">Select Tools</label>
+              <select className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="all">All Tools</option>
+                <option value="nmap">Nmap</option>
+                <option value="nslookup">Nslookup</option>
+                <option value="whatweb">WhatWeb</option>
+                <option value="dirb">Dirb</option>
+                <option value="gobuster">Gobuster</option>
+                <option value="dnsrecon">DNS Recon</option>
+              </select>
+            </div>
+          </div>
+          
+          {scanInProgress && (
+            <div className="mb-6">
+              <div className="flex justify-between mb-2">
+                <span className="text-sm font-medium">Scan in progress...</span>
+                <span className="text-sm font-medium">{loadingPercentage}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div 
+                  className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+                  style={{ width: `${loadingPercentage}%` }}
+                ></div>
+              </div>
+              <div className="mt-2 text-sm text-gray-500">
+                Running tools: {loadingPercentage < 30 ? 'Nmap, Nslookup' : loadingPercentage < 60 ? 'WhatWeb, Dirb' : 'Gobuster, DNS Recon'}
+              </div>
+            </div>
+          )}
+          
+          {Object.keys(scanResults).length > 0 && !scanInProgress && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                  <h3 className="text-lg font-medium mb-2">Scan Summary</h3>
+                  <p><strong>Target:</strong> {scanResults.target}</p>
+                  <p><strong>Scan Date:</strong> {new Date(scanResults.timestamp).toLocaleString()}</p>
+                  <p><strong>Total Findings:</strong> {vulnerabilities.length}</p>
                 </div>
-              ))}
+                
+                <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                  <h3 className="text-lg font-medium mb-2">Severity Score</h3>
+                  <div className="flex items-center">
+                    <div 
+                      className="w-24 h-24 rounded-full flex items-center justify-center text-white text-2xl font-bold"
+                      style={{ backgroundColor: getSeverityColor(scanResults.severityScore) }}
+                    >
+                      {scanResults.severityScore}
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-lg font-medium">{getSeverityLevel(scanResults.severityScore)}</p>
+                      <p className="text-sm text-gray-500">Based on {Object.values(scanResults.findings).reduce((a, b) => a + b, 0)} findings</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                  <h3 className="text-lg font-medium mb-2">Quick Actions</h3>
+                  <div className="flex flex-col space-y-2">
+                    <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center">
+                      <Eye className="mr-2 h-4 w-4" /> View Full Report
+                    </button>
+                    <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex items-center">
+                      <Code className="mr-2 h-4 w-4" /> Export Results
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+  // Continuation of renderDashboard
+  const renderDashboardChartsAndVulnerabilities = () => (
+    <div>
+      {Object.keys(scanResults).length > 0 && !scanInProgress && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+              <h3 className="text-lg font-medium mb-4">Vulnerability Distribution</h3>
+              <PieChart width={300} height={300}>
+                <Pie
+                  data={vulnerabilityData}
+                  cx={150}
+                  cy={150}
+                  innerRadius={60}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  paddingAngle={5}
+                  dataKey="count"
+                  label
+                >
+                  {vulnerabilityData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
             </div>
             
-            {/* Step content */}
-            <div className="w-full max-w-2xl">
-              {steps[currentStep].content}
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+              <h3 className="text-lg font-medium mb-4">Scan History</h3>
+              <LineChart
+                width={500}
+                height={300}
+                data={timelineData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="scans" stroke="#8884d8" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="vulnerabilities" stroke="#82ca9d" />
+              </LineChart>
             </div>
-          </motion.div>
-        </AnimatePresence>
+          </div>
+          
+          <div className="mb-6">
+            <h3 className="text-lg font-medium mb-4">Detected Vulnerabilities</h3>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+                <thead className="bg-gray-100 dark:bg-gray-700">
+                  <tr>
+                    <th className="py-3 px-4 text-left">Name</th>
+                    <th className="py-3 px-4 text-left">Severity</th>
+                    <th className="py-3 px-4 text-left">Description</th>
+                    <th className="py-3 px-4 text-left">Recommendation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {vulnerabilities.map(vuln => (
+                    <tr key={vuln.id} className="border-b border-gray-200 dark:border-gray-700">
+                      <td className="py-3 px-4">{vuln.name}</td>
+                      <td className="py-3 px-4">
+                        <span 
+                          className="px-2 py-1 rounded text-white text-sm"
+                          style={{ 
+                            backgroundColor: 
+                              vuln.severity === 'Critical' ? '#FF5252' : 
+                              vuln.severity === 'High' ? '#FF9100' : 
+                              vuln.severity === 'Medium' ? '#FFEB3B' : 
+                              vuln.severity === 'Low' ? '#4CAF50' : '#2196F3'
+                          }}
+                        >
+                          {vuln.severity}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">{vuln.description}</td>
+                      <td className="py-3 px-4">{vuln.recommendation}</td>
+                    </tr>
+                  ))}
+                  {vulnerabilities.length === 0 && (
+                    <tr>
+                      <td className="py-4 px-4 text-center" colSpan="4">No vulnerabilities detected</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+              <h3 className="text-lg font-medium mb-4">Network Services (Nmap)</h3>
+              <div className="space-y-3">
+                <p><strong>Open Ports:</strong> {scanResults.tools.nmap.ports.join(', ')}</p>
+                <p><strong>Detected Services:</strong> {scanResults.tools.nmap.services.join(', ')}</p>
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+              <h3 className="text-lg font-medium mb-4">Web Technologies (WhatWeb)</h3>
+              <div className="space-y-3">
+                <p><strong>Detected Technologies:</strong> {scanResults.tools.whatweb.technologies.join(', ')}</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+          <h2 className="text-xl font-bold mb-4">Scan History</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead>
+                <tr className="bg-gray-100 dark:bg-gray-700">
+                  <th className="py-3 px-4 text-left">Target</th>
+                  <th className="py-3 px-4 text-left">Date</th>
+                  <th className="py-3 px-4 text-left">Vulnerabilities</th>
+                  <th className="py-3 px-4 text-left">Severity</th>
+                  <th className="py-3 px-4 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {scanHistory.map(scan => (
+                  <tr key={scan.id} className="border-b border-gray-200 dark:border-gray-700">
+                    <td className="py-3 px-4">{scan.target}</td>
+                    <td className="py-3 px-4">{scan.date}</td>
+                    <td className="py-3 px-4">{scan.vulnerabilities}</td>
+                    <td className="py-3 px-4">
+                      <span 
+                        className="px-2 py-1 rounded text-white text-sm"
+                        style={{ backgroundColor: getSeverityColor(scan.severityScore) }}
+                      >
+                        {getSeverityLevel(scan.severityScore)}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <button className="text-blue-500 hover:text-blue-700 mr-2">View</button>
+                      <button className="text-red-500 hover:text-red-700">Delete</button>
+                    </td>
+                  </tr>
+                ))}
+                {scanHistory.length === 0 && (
+                  <tr>
+                    <td className="py-4 px-4 text-center" colSpan="5">No scan history</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
         
-        {/* Controls */}
-        <div className="mt-16 flex justify-center">
-          <button
-            onClick={() => setShowAnimation(!showAnimation)}
-            className="px-6 py-3 bg-white text-purple-900 rounded-lg font-bold hover:bg-white/90 transition-colors"
-          >
-            {showAnimation ? "Pause Animation" : "Resume Animation"}
-          </button>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+          <h2 className="text-xl font-bold mb-4">Security Dashboard</h2>
+          <div className="flex flex-wrap -mx-2">
+            <div className="w-1/2 px-2 mb-4">
+              <div className="p-4 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                <div className="flex items-center">
+                  <div className="p-3 bg-blue-500 rounded-full">
+                    <Shield className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-lg font-medium">Total Scans</h3>
+                    <p className="text-2xl font-bold">{scanHistory.length}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="w-1/2 px-2 mb-4">
+              <div className="p-4 bg-red-100 dark:bg-red-900 rounded-lg">
+                <div className="flex items-center">
+                  <div className="p-3 bg-red-500 rounded-full">
+                    <AlertTriangle className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-lg font-medium">Vulnerabilities</h3>
+                    <p className="text-2xl font-bold">
+                      {scanHistory.reduce((total, scan) => total + scan.vulnerabilities, 0)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
+  
+
+    // Render tools tab content
+    const renderTools = () => {
+      switch (activeSubTab) {
+        case 'nmap':
+          return <NmapScanner target={target} setScanResults={setScanResults} />;
+        case 'nslookup':
+          return <NslookupTool target={target} setScanResults={setScanResults} />;
+        case 'whatweb':
+          return <WhatwebScanner target={target} setScanResults={setScanResults} />;
+        case 'dirb':
+          return <DirbScanner target={target} setScanResults={setScanResults} />;
+        case 'gobuster':
+          return <GobusterScanner target={target} setScanResults={setScanResults} />;
+        case 'dnsrecon':
+          return <DnsReconTool target={target} setScanResults={setScanResults} />;
+        default:
+          return (
+            <div className="p-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Scanning Tools</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Nmap */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div className="flex items-center mb-4">
+                      <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
+                        <Search className="h-6 w-6 text-blue-500 dark:text-blue-300" />
+                      </div>
+                      <h3 className="text-xl font-medium ml-3">Nmap</h3>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
+                      Network mapper for port scanning and service detection
+                    </p>
+                    <button
+                      onClick={() => setActiveSubTab('nmap')}
+                      className="text-blue-500 hover:text-blue-700 font-medium"
+                    >
+                      Use Tool →
+                    </button>
+                  </div>
+                  {/* Nslookup */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div className="flex items-center mb-4">
+                      <div className="p-3 bg-green-100 dark:bg-green-900 rounded-full">
+                        <Globe className="h-6 w-6 text-green-500 dark:text-green-300" />
+                      </div>
+                      <h3 className="text-xl font-medium ml-3">Nslookup</h3>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
+                      Query DNS records and resolve domain names
+                    </p>
+                    <button
+                      onClick={() => setActiveSubTab('nslookup')}
+                      className="text-blue-500 hover:text-blue-700 font-medium"
+                    >
+                      Use Tool →
+                    </button>
+                  </div>
+                  {/* WhatWeb */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div className="flex items-center mb-4">
+                      <div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-full">
+                        <Code className="h-6 w-6 text-purple-500 dark:text-purple-300" />
+                      </div>
+                      <h3 className="text-xl font-medium ml-3">WhatWeb</h3>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
+                      Identify web technologies and fingerprinting
+                    </p>
+                    <button
+                      onClick={() => setActiveSubTab('whatweb')}
+                      className="text-blue-500 hover:text-blue-700 font-medium"
+                    >
+                      Use Tool →
+                    </button>
+                  </div>
+                  {/* Dirb */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div className="flex items-center mb-4">
+                      <div className="p-3 bg-red-100 dark:bg-red-900 rounded-full">
+                        <Terminal className="h-6 w-6 text-red-500 dark:text-red-300" />
+                      </div>
+                      <h3 className="text-xl font-medium ml-3">Dirb</h3>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
+                      Directory and file brute forcing for web servers
+                    </p>
+                    <button
+                      onClick={() => setActiveSubTab('dirb')}
+                      className="text-blue-500 hover:text-blue-700 font-medium"
+                    >
+                      Use Tool →
+                    </button>
+                  </div>
+                  {/* Gobuster */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div className="flex items-center mb-4">
+                      <div className="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
+                        <Server className="h-6 w-6 text-yellow-500 dark:text-yellow-300" />
+                      </div>
+                      <h3 className="text-xl font-medium ml-3">Gobuster</h3>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
+                      Directory/file/DNS/vhost busting tool
+                    </p>
+                    <button
+                      onClick={() => setActiveSubTab('gobuster')}
+                      className="text-blue-500 hover:text-blue-700 font-medium"
+                    >
+                      Use Tool →
+                    </button>
+                  </div>
+                  {/* DNS Recon */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div className="flex items-center mb-4">
+                      <div className="p-3 bg-teal-100 dark:bg-teal-900 rounded-full">
+                        <Database className="h-6 w-6 text-teal-500 dark:text-teal-300" />
+                      </div>
+                      <h3 className="text-xl font-medium ml-3">DNS Recon</h3>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
+                      DNS reconnaissance and subdomain enumeration
+                    </p>
+                    <button
+                      onClick={() => setActiveSubTab('dnsrecon')}
+                      className="text-blue-500 hover:text-blue-700 font-medium"
+                    >
+                      Use Tool →
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          );
+      }
+    };
+      // Render network map tab
+  const renderNetworkMap = () => (
+    <div className="p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Network Map</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+          <NetworkMap scanResults={scanResults} />
+          <p className="mt-4 text-gray-600 dark:text-gray-300">
+            Interactive 3D visualization of network topology based on scan results.
+          </p>
+        </div>
+      </motion.div>
+    </div>
+  );
+    // Render reports tab
+    const renderReports = () => (
+      <div className="p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Scan Reports</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="flex justify-between mb-4">
+              <h3 className="text-lg font-medium">Scan History</h3>
+              <button
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex items-center"
+                onClick={() => alert('Export functionality to be implemented')}
+              >
+                <Code className="mr-2 h-4 w-4" /> Export All
+              </button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full">
+                <thead className="bg-gray-100 dark:bg-gray-700">
+                  <tr>
+                    <th className="py-3 px-4 text-left">Target</th>
+                    <th className="py-3 px-4 text-left">Date</th>
+                    <th className="py-3 px-4 text-left">Vulnerabilities</th>
+                    <th className="py-3 px-4 text-left">Severity</th>
+                    <th className="py-3 px-4 text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {scanHistory.map(scan => (
+                    <tr key={scan.id} className="border-b border-gray-200 dark:border-gray-700">
+                      <td className="py-3 px-4">{scan.target}</td>
+                      <td className="py-3 px-4">{scan.date}</td>
+                      <td className="py-3 px-4">{scan.vulnerabilities}</td>
+                      <td className="py-3 px-4">
+                        <span
+                          className="px-2 py-1 rounded text-white text-sm"
+                          style={{ backgroundColor: getSeverityColor(scan.severityScore) }}
+                        >
+                          {getSeverityLevel(scan.severityScore)}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <button className="text-blue-500 hover:text-blue-700 mr-2">View</button>
+                        <button
+                          className="text-red-500 hover:text-red-700"
+                          onClick={() => setScanHistory(prev => prev.filter(s => s.id !== scan.id))}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {scanHistory.length === 0 && (
+                    <tr>
+                      <td className="py-4 px-4 text-center" colSpan="5">No scan history available</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+      // Render main content based on active tab
+  const renderMainContent = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return (
+          <>
+            {renderDashboard()}
+            {renderDashboardChartsAndVulnerabilities()}
+          </>
+        );
+      case 'tools':
+        return renderTools();
+      case 'network':
+        return renderNetworkMap();
+      case 'reports':
+        return renderReports();
+      default:
+        return <div className="p-6">Select a tab to view content</div>;
+    }
+  };
+  return (
+    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
+      <Navbar setActiveTab={setActiveTab} darkMode={darkMode} setDarkMode={setDarkMode} />
+      <div className="flex">
+        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <main className="flex-1">
+          {renderMainContent()}
+        </main>
+      </div>
+      <Footer />
+    </div>
+  );
 }
 
-export default AssetTokenizationApp;
+export default App;
